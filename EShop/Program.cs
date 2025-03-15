@@ -17,6 +17,10 @@ namespace EShop
             builder.Services.AddSingleton<IClientService, ClientService>();
             builder.Services.AddSingleton<IProductRepository, ProductRepository>();
             builder.Services.AddSingleton<IProductService, ProductService>();
+            builder.Services.AddSingleton<IInvoiceRepository, InvoiceRepository>();
+            builder.Services.AddSingleton<IInvoiceService, InvoiceService>();
+            builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
+            builder.Services.AddSingleton<IOrderService, OrderService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
