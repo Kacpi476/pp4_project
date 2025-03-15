@@ -1,4 +1,7 @@
 
+using EShop.Repositories;
+using EShop.Services;
+
 namespace EShop
 {
     public class Program
@@ -10,6 +13,8 @@ namespace EShop
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddSingleton<IClientRepository, ClientRepository>();
+            builder.Services.AddSingleton<IClientService, ClientService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -24,7 +29,7 @@ namespace EShop
             }
 
             app.UseHttpsRedirection();
-
+            app.UseRouting();
             app.UseAuthorization();
 
 
