@@ -11,7 +11,7 @@ public class OrderRepository : IOrderRepository
     
     public Order? GetOrderById(int id) => _orders.FirstOrDefault(o => o.Id == id);
 
-    public Order AddOrder(Order order)
+    public Order CreateOrder(Order order)
     {
         order.Id = _nextOrderId++;
         _orders.Add(order);

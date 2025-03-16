@@ -6,5 +6,5 @@ public interface IOrderService
 {
     List<Order> GetOrders();
     Order? GetOrderById(int id);
-    Order? CreateOrder(int clientId, int productId);
+    Order? CreateOrder(int clientId);
 }
