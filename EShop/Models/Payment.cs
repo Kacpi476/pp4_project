@@ -2,8 +2,11 @@ namespace EShop.Models;
 
 public class Payment
 {
-    DateTime Date { get; set; }= DateTime.Now;
-    public int amount { get; set; }
-    public Client client { get; set; }
-    public Order order { get; set; }
+    public int PaymentId { get; set; }
+    public int OrderId { get; set; }
+    public int ClientId { get; set; }
+    public decimal Amount { get; set; }
+    public string paymentStatus { get; set; }
+    public string paymentMethod { get; set; }
+    public DateTime PaymentDate { get; set; }
 }

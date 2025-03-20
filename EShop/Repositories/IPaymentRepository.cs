@@ -3,6 +3,10 @@ namespace EShop.Repositories
 {
     public interface IPaymentRepository
     {
-        List<PaymentRepository> GetPayments();
+        List<Payment> GetPayments();
+        
+        Payment? GetPaymentByOrderId(int id);
+        
+        public Payment CreatePayment(Payment payment);
     }
 }

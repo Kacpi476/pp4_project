@@ -1,3 +1,5 @@
+using EShop.enums;
+
 namespace EShop.Models;
 
 public class Order
@@ -7,6 +9,7 @@ public class Order
     public List<OrderItem> OrderItems { get; set; }
     public DateTime OrderDate { get; set; }
     public decimal TotalAmount { get; set; }
+    public PaymentMethod paymentMethod { get; set; }
 }
 
 public class OrderItem

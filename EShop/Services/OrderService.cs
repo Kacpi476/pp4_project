@@ -1,3 +1,4 @@
+using EShop.enums;
 using EShop.Models;
 using EShop.Repositories;
 
@@ -9,16 +10,18 @@ public class OrderService : IOrderService
     private readonly ICartRepository _cartRepository;
     private readonly IProductRepository _productRepository;
     private readonly IOrderRepository _orderRepository;
+    private readonly IPaymentService _paymentService;
 
-    public OrderService(IClientRepository clientRepository, ICartRepository cartRepository, IProductRepository productRepository, IOrderRepository orderRepository)
+    public OrderService(IClientRepository clientRepository, ICartRepository cartRepository, IProductRepository productRepository, IOrderRepository orderRepository, IPaymentService paymentService)
     {
         _clientRepository = clientRepository;
         _cartRepository = cartRepository;
         _productRepository = productRepository;
         _orderRepository = orderRepository;
+        _paymentService = paymentService;
     }
 
-    public Order CreateOrder(int clientId)
+    public Order CreateOrder(int clientId, PaymentMethod paymentMethod)
     {
         // Pobranie klienta
         var client = _clientRepository.GetClientById(clientId);
@@ -55,10 +58,11 @@ public class OrderService : IOrderService
             // Tworzymy OrderItem
             orderItems.Add(new OrderItem
             {
-                ProductId = product.Id,  // Przechowujemy ProductId
-                ProductPrice = product.Price,  // Przechowujemy cenę produktu
+                ProductId = product.Id,
+                ProductName = product.Name,
+                ProductPrice = product.Price,
                 Quantity = cartItem.Quantity,
-                TotalPrice = totalPrice  // Cena całkowita dla tej pozycji
+                TotalPrice = totalPrice
             });
         }
 
@@ -68,18 +72,21 @@ public class OrderService : IOrderService
             ClientId = clientId,  // Przypisujemy ClientId
             OrderItems = orderItems,
             OrderDate = DateTime.Now,
-            TotalAmount = totalAmount
+            TotalAmount = totalAmount,
+            paymentMethod = paymentMethod
         };
 
-        // Generujemy ID zamówienia (prosta inkrementacja)
+        // Generujemy ID zamówienia
         order.Id = _orderRepository.GetOrders().Count + 1;
 
         // Dodajemy zamówienie do repozytorium
         _orderRepository.CreateOrder(order);
-
+        
+        _paymentService.CreatePayment(order.Id, order.TotalAmount, paymentMethod);
+        
         // Resetujemy koszyk po złożeniu zamówienia
         _cartRepository.ClearCart(clientId);
-
+        
         return order;
     }
     public List<Order> GetOrders() => _orderRepository.GetOrders();

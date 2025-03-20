@@ -23,6 +23,8 @@ namespace EShop
             builder.Services.AddSingleton<IOrderService, OrderService>();
             builder.Services.AddSingleton<ICartRepository, CartRepository>();
             builder.Services.AddSingleton<ICartService, CartService>();
+            builder.Services.AddSingleton<IPaymentRepository, PaymentRepository>();
+            builder.Services.AddSingleton<IPaymentService, PaymentService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

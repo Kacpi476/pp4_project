@@ -1,3 +1,4 @@
+using EShop.enums;
 using EShop.Models;
 using EShop.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost("create/{clientId}")]
-    public IActionResult CreateOrder(int clientId)
+    public IActionResult CreateOrder(int clientId,[FromBody] PaymentMethod paymentMethod)
     {
         // Pobierz koszyk klienta
         var cart = _cartService.GetCart(clientId);
@@ -30,14 +31,22 @@ public class OrderController : ControllerBase
         }
 
         // Tworzymy zamówienie na podstawie koszyka
-        var order = _orderService.CreateOrder(clientId);
+        var order = _orderService.CreateOrder(clientId,paymentMethod);
         
         // Czyszczenie koszyka po złożeniu zamówienia
         _cartService.ClearCart(clientId);
 
         return Ok(new { Message = "Zamówienie zostało złożone.", OrderId = order.Id });
     }
-
+    
+    // Pobranie dostępnych metod płatności
+    [HttpGet("payment-methods")]
+    public IActionResult GetPaymentMethods()
+    {
+        var methods = Enum.GetNames(typeof(PaymentMethod)); // Pobieramy metody jako stringi
+        return Ok(methods);
+    }
+    
     [HttpGet]
     public IActionResult GetOrders()
     {

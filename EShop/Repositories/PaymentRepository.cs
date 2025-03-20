@@ -4,16 +4,15 @@ namespace EShop.Repositories
     public class PaymentRepository:IPaymentRepository
     {
         private readonly List<Payment> _paymentList = new();
-        public PaymentRepository() 
-        {
-            _paymentList.Add(new Payment() { amount = 1});
-            _paymentList.Add(new Payment() { amount = 2 });
-        }
-        public List<Payment> GetPayments()=>_paymentList;
+        public List<Payment> GetPayments() => _paymentList;
+        
+        public Payment? GetPaymentByOrderId(int id) => _paymentList.FirstOrDefault(p =>p.OrderId == id );
 
-        List<PaymentRepository> IPaymentRepository.GetPayments()
+        public Payment CreatePayment(Payment payment)
         {
-            throw new NotImplementedException();
+            payment.PaymentId = Convert.ToInt32("9900"+_paymentList.Count+1);
+            _paymentList.Add(payment);
+            return payment;
         }
     }
 }
