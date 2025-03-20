@@ -20,6 +20,21 @@ public class PaymentService : IPaymentService
     public List<Payment> GetPayments() => _paymentRepository.GetPayments();
     public Payment? GetPaymentByOrderId(int paymentId) => _paymentRepository.GetPaymentByOrderId(paymentId);
 
+    public Payment? PayForOrder(int orderId)
+    {
+        var payment = _paymentRepository.GetPaymentByOrderId(orderId);
+        if (payment != null)
+        {
+            throw new Exception("payment not found");
+        }
+        if (payment.paymentStatus == "Paid")
+        {
+            throw new Exception("payment already paid");
+        }
+        payment.paymentStatus = "Paid";
+        return payment;
+    }
+
     public Payment CreatePayment(int orderId, decimal amount, PaymentMethod paymentMethod)
     {
         // Pobranie zamówienia

@@ -7,6 +7,7 @@ namespace EShop.Repositories
         
         Payment? GetPaymentByOrderId(int id);
         
+        Payment PayForOrder(int orderId, string newStatus);
         public Payment CreatePayment(Payment payment);
     }
 }

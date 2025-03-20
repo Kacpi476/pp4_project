@@ -29,4 +29,13 @@ public class PaymentController : ControllerBase
             return NotFound("Payment not found");
         return Ok(payment);
     }
+
+    [HttpGet("/payfororder/{orderId}")]
+    public IActionResult PayForOrder(int orderId)
+    {
+        var payment = _paymentService.PayForOrder(orderId);
+        if (payment == null)
+            return NotFound("Payment not found");
+        return Ok(payment);
+    }
 }

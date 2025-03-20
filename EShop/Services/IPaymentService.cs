@@ -7,5 +7,7 @@ public interface IPaymentService
 {
     public List<Payment> GetPayments();
     public Payment? GetPaymentByOrderId(int paymentId);
+    
+    public Payment? PayForOrder(int orderId);
     public Payment CreatePayment(int orderId, decimal amount, PaymentMethod paymentMethod);
 }

@@ -17,10 +17,15 @@ public class OrderController : ControllerBase
         _cartService = cartService;
         
     }
-
+    
     [HttpPost("create/{clientId}")]
-    public IActionResult CreateOrder(int clientId,[FromBody] PaymentMethod paymentMethod)
+    public IActionResult CreateOrder(int clientId, PaymentMethod paymentMethod)
     {
+        if (paymentMethod == null)
+        {
+            return BadRequest("Nie podano metody płatności.");
+        }
+        
         // Pobierz koszyk klienta
         var cart = _cartService.GetCart(clientId);
         
@@ -29,7 +34,6 @@ public class OrderController : ControllerBase
         {
             return BadRequest("Koszyk jest pusty. Dodaj produkty do koszyka, aby złożyć zamówienie.");
         }
-
         // Tworzymy zamówienie na podstawie koszyka
         var order = _orderService.CreateOrder(clientId,paymentMethod);
         
