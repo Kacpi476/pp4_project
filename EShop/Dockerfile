@@ -6,6 +6,7 @@ USER app
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
+EXPOSE 4200
 
 
 # Ten etap służy do kompilowania projektu usługi

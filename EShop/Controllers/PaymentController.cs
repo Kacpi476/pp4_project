@@ -1,41 +1,75 @@
-using EShop.Models;
-using EShop.Services;
+using EShop.Application.Service;
+using EShop.Domain.Enums;
+using EShop.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EShop.Controllers;
-
-[ApiController]
-[Route("api/payment")]
-public class PaymentController : ControllerBase
+namespace EShop.Controllers
 {
-    private readonly IPaymentService _paymentService;
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class PaymentController : ControllerBase
+    {
+        private readonly IPaymentService _paymentService;
+        private readonly IOrderService _orderService;
+        private readonly IInvoiceService _invoiceService;
 
-    public PaymentController(IPaymentService paymentService)
-    {
-        _paymentService = paymentService;
-    }
+        public PaymentController(IPaymentService paymentService, IOrderService orderService, IInvoiceService invoiceService)
+        {
+            _paymentService = paymentService;
+            _orderService = orderService;
+            _invoiceService = invoiceService;
+        }
 
-    [HttpGet]
-    public IActionResult GetPayments()
-    {
-        return Ok(_paymentService.GetPayments());
-    }
-    
-    [HttpGet("{orderId}")]
-    public IActionResult GetPaymentByOrderId(int orderId)
-    {
-        var payment = _paymentService.GetPaymentByOrderId(orderId);
-        if (payment == null)
-            return NotFound("Payment not found");
-        return Ok(payment);
-    }
+        [HttpGet("order/{orderId}")]
+        public IActionResult GetPaymentByOrderId(int orderId)
+        {
+            var payment = _paymentService.GetPaymentByOrderId(orderId);
+            if (payment == null)
+                return NotFound("Payment not found for this order");
+            
+            return Ok(payment);
+        }
 
-    [HttpGet("/payfororder/{orderId}")]
-    public IActionResult PayForOrder(int orderId)
-    {
-        var payment = _paymentService.PayForOrder(orderId);
-        if (payment == null)
-            return NotFound("Payment not found");
-        return Ok(payment);
+        [HttpPut("order/{orderId}/status")]
+        public IActionResult UpdatePaymentStatus(int orderId, PaymentStatus newStatus)
+        {
+            try
+            {
+                _paymentService.UpdatePaymentStatus(orderId, newStatus);
+                
+                // Update order status based on payment status
+                var order = _orderService.GetOrderById(orderId);
+                if (order != null)
+                {
+                    switch (newStatus)
+                    {
+                        case PaymentStatus.Completed:
+                            order.Status = OrderStatus.Confirmed;
+                            break;
+                        case PaymentStatus.Failed:
+                            order.Status = OrderStatus.Cancelled;
+                            break;
+                        case PaymentStatus.Pending:
+                            order.Status = OrderStatus.Pending;
+                            break;
+                    }
+                }
+                
+                return Ok(new { Message = "Payment status updated successfully", NewStatus = newStatus });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error updating payment status: {ex.Message}");
+            }
+        }
+
+        [HttpGet("statuses")]
+        public IActionResult GetPaymentStatuses()
+        {
+            var statuses = Enum.GetNames(typeof(PaymentStatus));
+            return Ok(statuses);
+        }
     }
 }
